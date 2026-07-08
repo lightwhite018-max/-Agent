@@ -130,6 +130,97 @@ h3 {
   gap: 18px;
 }
 
+.acceptance-view {
+  display: grid;
+  gap: 16px;
+}
+
+.acceptance-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.acceptance-summary-card {
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+}
+
+.acceptance-summary-card span {
+  color: #607167;
+}
+
+.acceptance-summary-card strong {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.1;
+  margin-top: 8px;
+}
+
+.acceptance-summary-card.covered strong {
+  color: #256b4a;
+}
+
+.acceptance-summary-card.enhanced strong {
+  color: #8a5a1f;
+}
+
+.acceptance-summary-card.pending strong {
+  color: #7f2f22;
+}
+
+.acceptance-list {
+  display: grid;
+  gap: 12px;
+}
+
+.acceptance-item {
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+}
+
+.acceptance-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.acceptance-id {
+  color: #2f7656;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.acceptance-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.acceptance-status.covered {
+  background: #e2f1e6;
+  color: #1f573c;
+}
+
+.acceptance-status.enhanced {
+  background: #fff5e8;
+  color: #6b4018;
+}
+
+.acceptance-status.pending {
+  background: #fee9e4;
+  color: #7f2f22;
+}
+
 .panel {
   background: #fff;
   border: 1px solid #dce5dd;
@@ -503,13 +594,14 @@ textarea {
 
   .view-tabs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     width: 100%;
   }
 
   .agent-result,
   .detail-grid,
   .admin-summary,
+  .acceptance-summary,
   .facility-admin-list,
   .work-order-item {
     grid-template-columns: 1fr;
@@ -521,7 +613,8 @@ textarea {
   }
 
   .card-header,
-  .detail-heading {
+  .detail-heading,
+  .acceptance-item-header {
     flex-direction: column;
   }
 }

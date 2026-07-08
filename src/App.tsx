@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AdminPanel } from "./components/AdminPanel";
+import { AcceptancePanel } from "./components/AcceptancePanel";
 import { FeedbackPanel } from "./components/FeedbackPanel";
 import { HarborDetailPanel } from "./components/HarborDetailPanel";
 import { RecommendationPanel } from "./components/RecommendationPanel";
@@ -8,7 +9,7 @@ import { manualLocations } from "./data/locations";
 import { prototypeApi } from "./services/prototypeApi";
 import type { FacilityStatus, HarborStatus, ReportTicket } from "./types";
 
-type AppView = "worker" | "admin";
+type AppView = "worker" | "admin" | "acceptance";
 
 export function App() {
   const initialState = useMemo(() => prototypeApi.loadState(), []);
@@ -96,6 +97,9 @@ export function App() {
         <button className={activeView === "admin" ? "active" : ""} type="button" onClick={() => setActiveView("admin")}>
           管理端入口
         </button>
+        <button className={activeView === "acceptance" ? "active" : ""} type="button" onClick={() => setActiveView("acceptance")}>
+          验收面板
+        </button>
       </nav>
 
       {activeView === "worker" ? (
@@ -127,7 +131,7 @@ export function App() {
             onSubmitReport={submitReport}
           />
         </section>
-      ) : (
+      ) : activeView === "admin" ? (
         <section className="admin-view">
           <AdminPanel
             harbors={harborData}
@@ -137,6 +141,8 @@ export function App() {
             onResetDemoData={resetDemoData}
           />
         </section>
+      ) : (
+        <AcceptancePanel />
       )}
     </main>
   );
