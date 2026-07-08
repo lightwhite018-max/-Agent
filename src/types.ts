@@ -23,7 +23,7 @@ export interface Facility {
   status: FacilityStatus;
 }
 
-export interface Harbor {
+export interface HarborRecord {
   id: string;
   name: string;
   district: string;
@@ -40,6 +40,9 @@ export interface Harbor {
   updatedAt: string;
   lastVerifiedAt: string;
   dataFreshnessStatus: "fresh" | "stale";
+}
+
+export interface Harbor extends HarborRecord {
   facilities: Facility[];
 }
 
