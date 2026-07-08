@@ -125,6 +125,46 @@ h3 {
   white-space: nowrap;
 }
 
+.external-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  background: #fff;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+}
+
+.external-status p {
+  color: #607167;
+  font-size: 0.9rem;
+  margin: 0 0 0 auto;
+}
+
+.service-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.service-pill strong {
+  font-weight: 700;
+}
+
+.service-pill.mock {
+  background: #fff5e8;
+  color: #6b4018;
+}
+
+.service-pill.configured {
+  background: #e2f1e6;
+  color: #1f573c;
+}
+
 .view-tabs {
   display: inline-flex;
   gap: 4px;
@@ -678,6 +718,15 @@ textarea {
   .admin-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .external-status {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .external-status p {
+    margin-left: 0;
   }
 
   .card-header,

@@ -1,7 +1,8 @@
 import { Navigation } from "lucide-react";
+import type { NavigationPreview } from "../services/externalServices";
 import type { Harbor } from "../types";
 
-export function HarborDetailPanel({ harbor }: { harbor: Harbor }) {
+export function HarborDetailPanel({ harbor, navigationPreview }: { harbor: Harbor; navigationPreview: NavigationPreview }) {
   return (
     <section className="panel detail-panel">
       <div className="panel-title">
@@ -37,7 +38,7 @@ export function HarborDetailPanel({ harbor }: { harbor: Harbor }) {
       <button className="primary-action" type="button">
         打开导航
       </button>
-      <p className="muted">地图接口失败时，原型会降级展示地址和直线距离，不编造步行时间。</p>
+      <p className="muted">{navigationPreview.message}</p>
     </section>
   );
 }

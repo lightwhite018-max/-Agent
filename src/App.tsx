@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AdminPanel } from "./components/AdminPanel";
 import { AcceptancePanel } from "./components/AcceptancePanel";
+import { ExternalStatusBar } from "./components/ExternalStatusBar";
 import { FeedbackPanel } from "./components/FeedbackPanel";
 import { HarborDetailPanel } from "./components/HarborDetailPanel";
 import { RecommendationPanel } from "./components/RecommendationPanel";
@@ -44,11 +45,14 @@ export function App() {
   const { parsedNeed, recommendationResult } = recommendationResponse;
   const recommendations = recommendationResult.items;
   const abnormalFacilityCount = harborData.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length;
+  const runtimeStatus = useMemo(() => prototypeApi.getRuntimeStatus(), []);
+  const weatherPreview = useMemo(() => prototypeApi.getWeatherPreview(), []);
   const activeHarbor =
     recommendations.find((item) => item.harbor.id === selectedHarborId)?.harbor ??
     harborData.find((item) => item.id === selectedHarborId) ??
     recommendations[0]?.harbor ??
     harborData[0];
+  const navigationPreview = useMemo(() => prototypeApi.getNavigationPreview(activeHarbor), [activeHarbor]);
 
   function submitReport() {
     if (!activeHarbor || reportText.trim().length === 0) return;
@@ -110,6 +114,8 @@ export function App() {
         </div>
       </section>
 
+      <ExternalStatusBar status={runtimeStatus} weatherMessage={weatherPreview.message} />
+
       <nav className="view-tabs" aria-label="原型视图">
         <button className={activeView === "worker" ? "active" : ""} type="button" onClick={() => setActiveView("worker")}>
           用户端体验
@@ -141,7 +147,7 @@ export function App() {
             onSelectHarbor={setSelectedHarborId}
           />
 
-          <HarborDetailPanel harbor={activeHarbor} />
+          <HarborDetailPanel harbor={activeHarbor} navigationPreview={navigationPreview} />
 
           <FeedbackPanel
             activeHarbor={activeHarbor}
