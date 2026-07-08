@@ -142,6 +142,11 @@ h3 {
   margin: 0 0 0 auto;
 }
 
+.external-status p strong {
+  color: #204c38;
+  margin-right: 8px;
+}
+
 .service-pill {
   display: inline-flex;
   align-items: center;
@@ -557,6 +562,23 @@ textarea {
   color: #fff;
   padding: 12px 14px;
   font-weight: 700;
+}
+
+.navigation-preview {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  background: #eef5ef;
+  color: #204c38;
+  margin-top: 12px;
+  padding: 12px;
+}
+
+.navigation-preview ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
 }
 
 .feedback-panel textarea {

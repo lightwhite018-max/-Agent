@@ -46,7 +46,7 @@ export function App() {
   const recommendations = recommendationResult.items;
   const abnormalFacilityCount = harborData.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length;
   const runtimeStatus = useMemo(() => prototypeApi.getRuntimeStatus(), []);
-  const weatherPreview = useMemo(() => prototypeApi.getWeatherPreview(), []);
+  const weatherPreview = useMemo(() => prototypeApi.getWeatherPreview(parsedNeed.weatherContext), [parsedNeed.weatherContext]);
   const activeHarbor =
     recommendations.find((item) => item.harbor.id === selectedHarborId)?.harbor ??
     harborData.find((item) => item.id === selectedHarborId) ??
@@ -114,7 +114,7 @@ export function App() {
         </div>
       </section>
 
-      <ExternalStatusBar status={runtimeStatus} weatherMessage={weatherPreview.message} />
+      <ExternalStatusBar status={runtimeStatus} weatherText={weatherPreview.weatherText} weatherMessage={weatherPreview.message} />
 
       <nav className="view-tabs" aria-label="原型视图">
         <button className={activeView === "worker" ? "active" : ""} type="button" onClick={() => setActiveView("worker")}>

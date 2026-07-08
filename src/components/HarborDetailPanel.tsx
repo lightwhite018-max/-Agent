@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Navigation } from "lucide-react";
 import type { NavigationPreview } from "../services/externalServices";
 import type { Harbor } from "../types";
 
 export function HarborDetailPanel({ harbor, navigationPreview }: { harbor: Harbor; navigationPreview: NavigationPreview }) {
+  const [hasOpenedNavigation, setHasOpenedNavigation] = useState(false);
+
   return (
     <section className="panel detail-panel">
       <div className="panel-title">
@@ -35,10 +38,20 @@ export function HarborDetailPanel({ harbor, navigationPreview }: { harbor: Harbo
           </span>
         ))}
       </div>
-      <button className="primary-action" type="button">
-        打开导航
+      <button className="primary-action" type="button" onClick={() => setHasOpenedNavigation(true)}>
+        {navigationPreview.actionLabel}
       </button>
       <p className="muted">{navigationPreview.message}</p>
+      {hasOpenedNavigation && (
+        <div className="navigation-preview" aria-live="polite">
+          <strong>{navigationPreview.status === "mock" ? "导航降级结果" : "路线规划预览"}</strong>
+          <ol>
+            {navigationPreview.fallbackSteps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      )}
     </section>
   );
 }

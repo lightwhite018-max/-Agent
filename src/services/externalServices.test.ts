@@ -30,8 +30,12 @@ describe("externalServices", () => {
 
   it("导航和天气预览提供降级文案", () => {
     const config = { mapProvider: "mock", weatherProvider: "mock" } as const;
+    const navigationPreview = getNavigationPreview(config, harbors[0]);
+    const weatherPreview = getWeatherPreview(config, "rain");
 
-    expect(getNavigationPreview(config, harbors[0]).message).toContain("降级");
-    expect(getWeatherPreview(config).message).toContain("不阻断");
+    expect(navigationPreview.message).toContain("降级");
+    expect(navigationPreview.fallbackSteps).toContain(`确认目的地：${harbors[0].name}`);
+    expect(weatherPreview.weatherText).toContain("降雨");
+    expect(weatherPreview.message).toContain("室内避雨");
   });
 });

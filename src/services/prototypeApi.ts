@@ -90,7 +90,7 @@ export const prototypeApi = {
     return getNavigationPreview(getRuntimeConfig(), harbor);
   },
 
-  getWeatherPreview() {
-    return getWeatherPreview(getRuntimeConfig());
+  getWeatherPreview(weatherContext?: ParsedNeed["weatherContext"]) {
+    return getWeatherPreview(getRuntimeConfig(), weatherContext);
   },
 };
