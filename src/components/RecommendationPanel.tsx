@@ -1,4 +1,4 @@
-import { AlertTriangle, Clock, MapPin } from "lucide-react";
+import { AlertTriangle, Clock, MapPin, Navigation } from "lucide-react";
 import type { Recommendation, RecommendationResult } from "../types";
 
 interface RecommendationPanelProps {
@@ -60,6 +60,13 @@ function RecommendationCard({ item, selected, onSelect }: { item: Recommendation
           {item.harbor.walkingTimeMinutes} 分钟
         </span>
         <span>{item.harbor.openingHours}</span>
+      </div>
+      <div className="card-action-row">
+        <span>{item.harbor.status === "open" ? "开放中" : "不可用"}</span>
+        <span>
+          <Navigation size={15} />
+          查看详情与导航
+        </span>
       </div>
       <ul>
         {item.reasons.slice(0, 3).map((reason) => (

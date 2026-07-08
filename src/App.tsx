@@ -43,6 +43,7 @@ export function App() {
   );
   const { parsedNeed, recommendationResult } = recommendationResponse;
   const recommendations = recommendationResult.items;
+  const abnormalFacilityCount = harborData.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length;
   const activeHarbor =
     recommendations.find((item) => item.harbor.id === selectedHarborId)?.harbor ??
     harborData.find((item) => item.id === selectedHarborId) ??
@@ -87,6 +88,25 @@ export function App() {
           <button type="button" onClick={() => setHasLocation((value) => !value)}>
             {hasLocation ? "模拟拒绝定位" : "恢复定位"}
           </button>
+        </div>
+      </section>
+
+      <section className="kpi-strip" aria-label="原型关键状态">
+        <div>
+          <span>推荐结果</span>
+          <strong>{recommendations.length}</strong>
+        </div>
+        <div>
+          <span>当前港湾</span>
+          <strong>{activeHarbor.name}</strong>
+        </div>
+        <div>
+          <span>待处理工单</span>
+          <strong>{tickets.length}</strong>
+        </div>
+        <div>
+          <span>异常设施</span>
+          <strong>{abnormalFacilityCount}</strong>
         </div>
       </section>
 

@@ -18,6 +18,15 @@ export function AcceptancePanel() {
 
   return (
     <section className="acceptance-view">
+      <div className="acceptance-hero panel">
+        <div>
+          <p className="eyebrow">P0-M 验收进度</p>
+          <h2>核心闭环已进入可演示状态</h2>
+          <p className="muted">清单将 PRD 验收标准转成作品集可讲述的状态视图，区分已覆盖、演示增强和待接入能力。</p>
+        </div>
+        <strong>{Math.round((counts.covered / acceptanceCases.length) * 100)}%</strong>
+      </div>
+
       <div className="acceptance-summary">
         <SummaryCard label="已覆盖" value={counts.covered} status="covered" />
         <SummaryCard label="演示增强" value={counts.enhanced} status="enhanced" />

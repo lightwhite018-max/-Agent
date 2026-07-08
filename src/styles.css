@@ -95,6 +95,36 @@ h3 {
   padding: 9px 12px;
 }
 
+.kpi-strip {
+  display: grid;
+  grid-template-columns: 0.8fr 1.6fr 0.8fr 0.8fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.kpi-strip div {
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  background: #fff;
+  padding: 14px;
+}
+
+.kpi-strip span {
+  display: block;
+  color: #607167;
+  font-size: 0.88rem;
+  margin-bottom: 6px;
+}
+
+.kpi-strip strong {
+  display: block;
+  color: #204c38;
+  font-size: 1.35rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .view-tabs {
   display: inline-flex;
   gap: 4px;
@@ -133,6 +163,24 @@ h3 {
 .acceptance-view {
   display: grid;
   gap: 16px;
+}
+
+.acceptance-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.acceptance-hero h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.acceptance-hero strong {
+  color: #256b4a;
+  font-size: 3rem;
+  line-height: 1;
 }
 
 .acceptance-summary {
@@ -375,6 +423,25 @@ textarea {
   align-items: center;
 }
 
+.card-action-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  background: #eef5ef;
+  color: #1f573c;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.card-action-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .harbor-card ul {
   padding-left: 18px;
   margin-bottom: 0;
@@ -580,7 +647,8 @@ textarea {
 
 @media (max-width: 900px) {
   .hero-panel,
-  .workspace-grid {
+  .workspace-grid,
+  .kpi-strip {
     grid-template-columns: 1fr;
   }
 
@@ -614,7 +682,9 @@ textarea {
 
   .card-header,
   .detail-heading,
-  .acceptance-item-header {
+  .acceptance-item-header,
+  .acceptance-hero,
+  .card-action-row {
     flex-direction: column;
   }
 }
