@@ -9,6 +9,12 @@ pnpm install
 pnpm dev
 ```
 
+Windows PowerShell 如果提示找不到 `pnpm`，可以直接运行：
+
+```powershell
+.\start-dev.ps1
+```
+
 ## 当前能力
 
 - 规则 Agent：识别喝水、充电、休息、避雨、如厕、反馈等需求。
