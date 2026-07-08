@@ -21,6 +21,8 @@ Windows PowerShell 如果提示找不到 `pnpm`，可以直接运行：
 
 - [开发规划](docs/开发规划.md)
 - [迭代记录](docs/迭代记录.md)
+- [数据库草案](docs/数据库草案.sql)
+- [API 接口草案](docs/API接口草案.md)
 
 ## 当前能力
 
