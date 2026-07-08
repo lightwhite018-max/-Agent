@@ -1,18 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Clock, MapPin, MessageSquareText, Navigation, Send, Wrench } from "lucide-react";
-import { harbors as initialHarbors } from "./data/harbors";
 import { manualLocations } from "./data/locations";
-import { updateFacilityStatus, updateHarborStatus } from "./features/admin/harborAdmin";
-import { parseNeed } from "./features/agent/parseNeed";
-import { createReport } from "./features/feedback/createReport";
-import { clearAppState, getBrowserStorage, loadAppState, saveAppState } from "./features/persistence/appStorage";
-import { recommendHarborsWithFallback } from "./features/recommendation/recommend";
+import { prototypeApi } from "./services/prototypeApi";
 import type { FacilityStatus, Harbor, HarborStatus, Recommendation, ReportTicket } from "./types";
 
 const quickNeeds = ["我想喝水", "手机没电了", "下雨了还想充电", "太热了想休息", "想上厕所"];
 
 export function App() {
-  const initialState = useMemo(() => loadAppState(getBrowserStorage(), initialHarbors), []);
+  const initialState = useMemo(() => prototypeApi.loadState(), []);
   const [query, setQuery] = useState("我想喝水");
   const [harborData, setHarborData] = useState(initialState.harbors);
   const [hasLocation, setHasLocation] = useState(true);
@@ -22,7 +17,7 @@ export function App() {
   const [tickets, setTickets] = useState<ReportTicket[]>(initialState.tickets);
 
   useEffect(() => {
-    saveAppState(getBrowserStorage(), {
+    prototypeApi.saveState({
       schemaVersion: 1,
       harbors: harborData,
       tickets,
@@ -30,15 +25,17 @@ export function App() {
   }, [harborData, tickets]);
 
   const manualLocation = manualLocations.find((location) => location.id === manualLocationId) ?? manualLocations[0];
-  const parsedNeed = useMemo(() => parseNeed(query, hasLocation), [query, hasLocation]);
-  const recommendationResult = useMemo(
+  const recommendationResponse = useMemo(
     () =>
-      recommendHarborsWithFallback(parsedNeed, harborData, {
-        preferredDistrict: hasLocation ? undefined : manualLocation.district,
-        preferredBusinessArea: hasLocation ? undefined : manualLocation.businessArea,
+      prototypeApi.getRecommendations({
+        text: query,
+        hasLocation,
+        manualLocation,
+        harbors: harborData,
       }),
-    [harborData, hasLocation, manualLocation.businessArea, manualLocation.district, parsedNeed],
+    [query, harborData, hasLocation, manualLocation],
   );
+  const { parsedNeed, recommendationResult } = recommendationResponse;
   const recommendations = recommendationResult.items;
   const activeHarbor =
     recommendations.find((item) => item.harbor.id === selectedHarborId)?.harbor ??
@@ -48,22 +45,26 @@ export function App() {
 
   function submitReport() {
     if (!activeHarbor || reportText.trim().length === 0) return;
-    const nextTicket = createReport(activeHarbor.id, "设施异常", reportText.trim());
+    const nextTicket = prototypeApi.createReport({
+      harborId: activeHarbor.id,
+      category: "设施异常",
+      description: reportText.trim(),
+    });
     setTickets((current) => [nextTicket, ...current]);
   }
 
   function handleFacilityStatusChange(harborId: string, facilityId: string, status: FacilityStatus) {
-    setHarborData((current) => updateFacilityStatus(current, harborId, facilityId, status));
+    setHarborData((current) => prototypeApi.updateFacilityStatus(current, harborId, facilityId, status));
   }
 
   function handleHarborStatusChange(harborId: string, status: HarborStatus) {
-    setHarborData((current) => updateHarborStatus(current, harborId, status));
+    setHarborData((current) => prototypeApi.updateHarborStatus(current, harborId, status));
   }
 
   function resetDemoData() {
-    clearAppState(getBrowserStorage());
-    setHarborData(initialHarbors);
-    setTickets([]);
+    const nextState = prototypeApi.resetState();
+    setHarborData(nextState.harbors);
+    setTickets(nextState.tickets);
     setSelectedHarborId(null);
   }
 
