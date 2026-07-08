@@ -8,8 +8,11 @@ import { manualLocations } from "./data/locations";
 import { prototypeApi } from "./services/prototypeApi";
 import type { FacilityStatus, HarborStatus, ReportTicket } from "./types";
 
+type AppView = "worker" | "admin";
+
 export function App() {
   const initialState = useMemo(() => prototypeApi.loadState(), []);
+  const [activeView, setActiveView] = useState<AppView>("worker");
   const [query, setQuery] = useState("我想喝水");
   const [harborData, setHarborData] = useState(initialState.harbors);
   const [hasLocation, setHasLocation] = useState(true);
@@ -86,42 +89,55 @@ export function App() {
         </div>
       </section>
 
-      <section className="workspace-grid">
-        <RequestPanel
-          query={query}
-          hasLocation={hasLocation}
-          manualLocationId={manualLocationId}
-          parsedNeed={parsedNeed}
-          onQueryChange={setQuery}
-          onManualLocationChange={setManualLocationId}
-        />
+      <nav className="view-tabs" aria-label="原型视图">
+        <button className={activeView === "worker" ? "active" : ""} type="button" onClick={() => setActiveView("worker")}>
+          用户端体验
+        </button>
+        <button className={activeView === "admin" ? "active" : ""} type="button" onClick={() => setActiveView("admin")}>
+          管理端入口
+        </button>
+      </nav>
 
-        <RecommendationPanel
-          recommendations={recommendations}
-          recommendationResult={recommendationResult}
-          activeHarborId={activeHarbor.id}
-          selectedLocation={hasLocation ? "定位位置" : manualLocation.label}
-          onSelectHarbor={setSelectedHarborId}
-        />
+      {activeView === "worker" ? (
+        <section className="workspace-grid">
+          <RequestPanel
+            query={query}
+            hasLocation={hasLocation}
+            manualLocationId={manualLocationId}
+            parsedNeed={parsedNeed}
+            onQueryChange={setQuery}
+            onManualLocationChange={setManualLocationId}
+          />
 
-        <HarborDetailPanel harbor={activeHarbor} />
+          <RecommendationPanel
+            recommendations={recommendations}
+            recommendationResult={recommendationResult}
+            activeHarborId={activeHarbor.id}
+            selectedLocation={hasLocation ? "定位位置" : manualLocation.label}
+            onSelectHarbor={setSelectedHarborId}
+          />
 
-        <FeedbackPanel
-          activeHarbor={activeHarbor}
-          reportText={reportText}
-          latestTicket={tickets[0]}
-          onReportTextChange={setReportText}
-          onSubmitReport={submitReport}
-        />
+          <HarborDetailPanel harbor={activeHarbor} />
 
-        <AdminPanel
-          harbors={harborData}
-          tickets={tickets}
-          onFacilityStatusChange={handleFacilityStatusChange}
-          onHarborStatusChange={handleHarborStatusChange}
-          onResetDemoData={resetDemoData}
-        />
-      </section>
+          <FeedbackPanel
+            activeHarbor={activeHarbor}
+            reportText={reportText}
+            latestTicket={tickets[0]}
+            onReportTextChange={setReportText}
+            onSubmitReport={submitReport}
+          />
+        </section>
+      ) : (
+        <section className="admin-view">
+          <AdminPanel
+            harbors={harborData}
+            tickets={tickets}
+            onFacilityStatusChange={handleFacilityStatusChange}
+            onHarborStatusChange={handleHarborStatusChange}
+            onResetDemoData={resetDemoData}
+          />
+        </section>
+      )}
     </main>
   );
 }

@@ -95,9 +95,38 @@ h3 {
   padding: 9px 12px;
 }
 
+.view-tabs {
+  display: inline-flex;
+  gap: 4px;
+  background: #e5efe8;
+  border: 1px solid #ccded1;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  padding: 4px;
+}
+
+.view-tabs button {
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #526158;
+  padding: 10px 16px;
+}
+
+.view-tabs button.active {
+  background: #256b4a;
+  color: #fff;
+  font-weight: 700;
+}
+
 .workspace-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 18px;
+}
+
+.admin-view {
+  display: grid;
   gap: 18px;
 }
 
@@ -470,6 +499,12 @@ textarea {
 
   .workspace-grid {
     display: grid;
+  }
+
+  .view-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
   }
 
   .agent-result,
