@@ -1,9 +1,11 @@
 import { harbors as seedHarbors } from "../data/harbors";
+import { getRuntimeConfig } from "../config/runtimeConfig";
 import { updateFacilityStatus, updateHarborStatus } from "../features/admin/harborAdmin";
 import { parseNeed } from "../features/agent/parseNeed";
 import { createReport } from "../features/feedback/createReport";
 import { clearAppState, getBrowserStorage, loadAppState, saveAppState, type StorageLike } from "../features/persistence/appStorage";
 import { recommendHarborsWithFallback } from "../features/recommendation/recommend";
+import { getExternalServiceStatus, getNavigationPreview, getWeatherPreview } from "./externalServices";
 import type {
   AppPersistedState,
   FacilityStatus,
@@ -78,5 +80,17 @@ export const prototypeApi = {
 
   updateHarborStatus(harbors: Harbor[], harborId: string, status: HarborStatus): Harbor[] {
     return updateHarborStatus(harbors, harborId, status);
+  },
+
+  getRuntimeStatus() {
+    return getExternalServiceStatus(getRuntimeConfig());
+  },
+
+  getNavigationPreview(harbor: Harbor) {
+    return getNavigationPreview(getRuntimeConfig(), harbor);
+  },
+
+  getWeatherPreview() {
+    return getWeatherPreview(getRuntimeConfig());
   },
 };

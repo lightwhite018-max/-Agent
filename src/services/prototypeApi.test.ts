@@ -58,4 +58,9 @@ describe("prototypeApi", () => {
 
     expect(prototypeApi.loadState(storage).tickets[0].workOrderId).toBe(ticket.workOrderId);
   });
+
+  it("暴露外部服务运行状态", () => {
+    expect(prototypeApi.getRuntimeStatus().api).toBe("local");
+    expect(prototypeApi.getWeatherPreview().message).toContain("不阻断");
+  });
 });
