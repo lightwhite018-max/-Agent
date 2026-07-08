@@ -1,23 +1,33 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Clock, MapPin, MessageSquareText, Navigation, Send, Wrench } from "lucide-react";
 import { harbors as initialHarbors } from "./data/harbors";
 import { manualLocations } from "./data/locations";
 import { updateFacilityStatus, updateHarborStatus } from "./features/admin/harborAdmin";
 import { parseNeed } from "./features/agent/parseNeed";
 import { createReport } from "./features/feedback/createReport";
+import { clearAppState, getBrowserStorage, loadAppState, saveAppState } from "./features/persistence/appStorage";
 import { recommendHarborsWithFallback } from "./features/recommendation/recommend";
 import type { FacilityStatus, Harbor, HarborStatus, Recommendation, ReportTicket } from "./types";
 
 const quickNeeds = ["我想喝水", "手机没电了", "下雨了还想充电", "太热了想休息", "想上厕所"];
 
 export function App() {
+  const initialState = useMemo(() => loadAppState(getBrowserStorage(), initialHarbors), []);
   const [query, setQuery] = useState("我想喝水");
-  const [harborData, setHarborData] = useState(initialHarbors);
+  const [harborData, setHarborData] = useState(initialState.harbors);
   const [hasLocation, setHasLocation] = useState(true);
   const [manualLocationId, setManualLocationId] = useState(manualLocations[0].id);
   const [selectedHarborId, setSelectedHarborId] = useState<string | null>(null);
   const [reportText, setReportText] = useState("饮水机没水");
-  const [tickets, setTickets] = useState<ReportTicket[]>([]);
+  const [tickets, setTickets] = useState<ReportTicket[]>(initialState.tickets);
+
+  useEffect(() => {
+    saveAppState(getBrowserStorage(), {
+      schemaVersion: 1,
+      harbors: harborData,
+      tickets,
+    });
+  }, [harborData, tickets]);
 
   const manualLocation = manualLocations.find((location) => location.id === manualLocationId) ?? manualLocations[0];
   const parsedNeed = useMemo(() => parseNeed(query, hasLocation), [query, hasLocation]);
@@ -50,11 +60,18 @@ export function App() {
     setHarborData((current) => updateHarborStatus(current, harborId, status));
   }
 
+  function resetDemoData() {
+    clearAppState(getBrowserStorage());
+    setHarborData(initialHarbors);
+    setTickets([]);
+    setSelectedHarborId(null);
+  }
+
   return (
     <main className="app-shell">
       <section className="hero-panel">
         <div>
-          <p className="eyebrow">V0.1 可交互原型</p>
+          <p className="eyebrow">V0.5 可交互原型</p>
           <h1>劳动者港湾智能助手</h1>
           <p className="summary">用一句话或一个快捷入口，找到附近正在开放、设施可用的劳动者港湾。</p>
         </div>
@@ -178,6 +195,7 @@ export function App() {
           tickets={tickets}
           onFacilityStatusChange={handleFacilityStatusChange}
           onHarborStatusChange={handleHarborStatusChange}
+          onResetDemoData={resetDemoData}
         />
       </section>
     </main>
@@ -266,17 +284,25 @@ function AdminPanel({
   tickets,
   onFacilityStatusChange,
   onHarborStatusChange,
+  onResetDemoData,
 }: {
   harbors: Harbor[];
   tickets: ReportTicket[];
   onFacilityStatusChange: (harborId: string, facilityId: string, status: FacilityStatus) => void;
   onHarborStatusChange: (harborId: string, status: HarborStatus) => void;
+  onResetDemoData: () => void;
 }) {
   return (
     <section className="panel admin-panel">
       <div className="panel-title">
         <Wrench size={20} />
         <h2>简易管理入口</h2>
+      </div>
+      <div className="admin-toolbar">
+        <span>数据会保存到当前浏览器，刷新后仍保留。</span>
+        <button type="button" onClick={onResetDemoData}>
+          重置样例数据
+        </button>
       </div>
 
       <div className="admin-summary">

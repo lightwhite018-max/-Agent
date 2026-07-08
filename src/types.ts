@@ -85,3 +85,9 @@ export interface ReportTicket {
   status: "pending";
   createdAt: string;
 }
+
+export interface AppPersistedState {
+  schemaVersion: 1;
+  harbors: Harbor[];
+  tickets: ReportTicket[];
+}
