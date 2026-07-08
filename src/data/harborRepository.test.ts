@@ -7,7 +7,16 @@ describe("harborRepository", () => {
     const harbors = composeHarbors(harborSeed, facilitySeed);
 
     expect(harbors).toHaveLength(harborSeed.length);
+    expect(harbors.length).toBeGreaterThanOrEqual(8);
     expect(harbors.find((harbor) => harbor.id === "HB001")?.facilities).toHaveLength(5);
+  });
+
+  it("设施数据都能关联到有效港湾", () => {
+    const harborIds = new Set(harborSeed.map((harbor) => harbor.id));
+
+    for (const facility of facilitySeed) {
+      expect(harborIds.has(facility.harborId)).toBe(true);
+    }
   });
 
   it("可以把页面数据拆回接近数据库的两张表", () => {

@@ -29,7 +29,15 @@ describe("prototypeApi", () => {
     });
 
     expect(response.parsedNeed.facilityTypes).toContain("drinking_water");
-    expect(response.recommendationResult.items[0].harbor.id).toBe("HB001");
+    expect(response.recommendationResult.items[0].harbor.facilities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "drinking_water",
+          available: true,
+          status: "normal",
+        }),
+      ]),
+    );
   });
 
   it("封装手动位置推荐", () => {

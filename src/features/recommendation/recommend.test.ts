@@ -22,7 +22,7 @@ describe("recommendHarbors", () => {
   });
 
   it("无完全匹配时返回降级备选方案", () => {
-    const result = recommendHarborsWithFallback(parseNeed("有没有雨伞", true), harbors);
+    const result = recommendHarborsWithFallback(parseNeed("我想接热水再去卫生间", true), harbors);
 
     expect(result.fallbackUsed).toBe(true);
     expect(result.items.length).toBeGreaterThan(0);
