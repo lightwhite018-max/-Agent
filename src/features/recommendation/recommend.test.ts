@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { harbors } from "../../data/harbors";
 import { parseNeed } from "../agent/parseNeed";
 import { recommendHarbors } from "./recommend";
+import { recommendHarborsWithFallback } from "./recommend";
 
 describe("recommendHarbors", () => {
   it("喝水推荐包含 HB001，不包含无饮水设施或关闭港湾", () => {
@@ -18,5 +19,13 @@ describe("recommendHarbors", () => {
 
     expect(result[0].harbor.id).toBe("HB002");
     expect(result[0].reasons.join(" ")).toContain("充电");
+  });
+
+  it("无完全匹配时返回降级备选方案", () => {
+    const result = recommendHarborsWithFallback(parseNeed("有没有雨伞", true), harbors);
+
+    expect(result.fallbackUsed).toBe(true);
+    expect(result.items.length).toBeGreaterThan(0);
+    expect(result.message).toContain("不完全匹配");
   });
 });

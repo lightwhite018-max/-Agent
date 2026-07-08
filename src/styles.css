@@ -196,6 +196,21 @@ textarea {
   color: #6b4018;
 }
 
+.manual-location {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.manual-location select {
+  width: 100%;
+  border: 1px solid #cbd9cf;
+  border-radius: 8px;
+  background: #fbfdfb;
+  color: #162019;
+  padding: 11px 12px;
+}
+
 .recommendation-list {
   display: grid;
   gap: 12px;
@@ -322,6 +337,82 @@ textarea {
   margin-bottom: 10px;
 }
 
+.admin-panel {
+  grid-column: 1 / -1;
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.admin-summary span {
+  border-radius: 8px;
+  background: #eef5ef;
+  color: #204c38;
+  font-weight: 700;
+  padding: 10px;
+}
+
+.admin-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-item {
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.admin-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-item select,
+.facility-admin-list select {
+  border: 1px solid #cbd9cf;
+  border-radius: 8px;
+  background: #fbfdfb;
+  color: #162019;
+  padding: 8px 10px;
+}
+
+.facility-admin-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.facility-admin-list label {
+  display: grid;
+  gap: 6px;
+  border-radius: 8px;
+  background: #f4f8f5;
+  padding: 10px;
+}
+
+.work-order-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.work-order-item {
+  display: grid;
+  grid-template-columns: 120px 80px 1fr;
+  gap: 8px;
+  border-radius: 8px;
+  background: #f4f8f5;
+  padding: 10px;
+}
+
 .ticket {
   display: grid;
   gap: 6px;
@@ -329,6 +420,21 @@ textarea {
   background: #eef5ef;
   border-radius: 8px;
   padding: 12px;
+}
+
+.log-card {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  border-radius: 8px;
+  background: #f4f8f5;
+  padding: 12px;
+  color: #526158;
+  font-size: 0.9rem;
+}
+
+.log-card strong {
+  color: #204c38;
 }
 
 @media (max-width: 900px) {
@@ -346,7 +452,10 @@ textarea {
   }
 
   .agent-result,
-  .detail-grid {
+  .detail-grid,
+  .admin-summary,
+  .facility-admin-list,
+  .work-order-item {
     grid-template-columns: 1fr;
   }
 

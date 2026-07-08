@@ -55,11 +55,25 @@ export interface ParsedNeed {
   safetyNotice?: string;
 }
 
+export interface ManualLocation {
+  id: string;
+  label: string;
+  district: string;
+  businessArea: string;
+}
+
 export interface Recommendation {
   harbor: Harbor;
   score: number;
   reasons: string[];
   warnings: string[];
+}
+
+export interface RecommendationResult {
+  items: Recommendation[];
+  fallbackUsed: boolean;
+  message?: string;
+  noResultReason?: "no_open_harbor" | "no_facility_match";
 }
 
 export interface ReportTicket {

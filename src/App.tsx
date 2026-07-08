@@ -1,27 +1,53 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Clock, MapPin, MessageSquareText, Navigation, Send, Wrench } from "lucide-react";
-import { harbors } from "./data/harbors";
+import { harbors as initialHarbors } from "./data/harbors";
+import { manualLocations } from "./data/locations";
+import { updateFacilityStatus, updateHarborStatus } from "./features/admin/harborAdmin";
 import { parseNeed } from "./features/agent/parseNeed";
 import { createReport } from "./features/feedback/createReport";
-import { recommendHarbors } from "./features/recommendation/recommend";
-import type { Harbor, Recommendation, ReportTicket } from "./types";
+import { recommendHarborsWithFallback } from "./features/recommendation/recommend";
+import type { FacilityStatus, Harbor, HarborStatus, Recommendation, ReportTicket } from "./types";
 
 const quickNeeds = ["我想喝水", "手机没电了", "下雨了还想充电", "太热了想休息", "想上厕所"];
 
 export function App() {
   const [query, setQuery] = useState("我想喝水");
+  const [harborData, setHarborData] = useState(initialHarbors);
   const [hasLocation, setHasLocation] = useState(true);
-  const [selectedHarbor, setSelectedHarbor] = useState<Harbor | null>(null);
+  const [manualLocationId, setManualLocationId] = useState(manualLocations[0].id);
+  const [selectedHarborId, setSelectedHarborId] = useState<string | null>(null);
   const [reportText, setReportText] = useState("饮水机没水");
-  const [ticket, setTicket] = useState<ReportTicket | null>(null);
+  const [tickets, setTickets] = useState<ReportTicket[]>([]);
 
+  const manualLocation = manualLocations.find((location) => location.id === manualLocationId) ?? manualLocations[0];
   const parsedNeed = useMemo(() => parseNeed(query, hasLocation), [query, hasLocation]);
-  const recommendations = useMemo(() => recommendHarbors(parsedNeed, harbors), [parsedNeed]);
-  const activeHarbor = selectedHarbor ?? recommendations[0]?.harbor ?? harbors[0];
+  const recommendationResult = useMemo(
+    () =>
+      recommendHarborsWithFallback(parsedNeed, harborData, {
+        preferredDistrict: hasLocation ? undefined : manualLocation.district,
+        preferredBusinessArea: hasLocation ? undefined : manualLocation.businessArea,
+      }),
+    [harborData, hasLocation, manualLocation.businessArea, manualLocation.district, parsedNeed],
+  );
+  const recommendations = recommendationResult.items;
+  const activeHarbor =
+    recommendations.find((item) => item.harbor.id === selectedHarborId)?.harbor ??
+    harborData.find((item) => item.id === selectedHarborId) ??
+    recommendations[0]?.harbor ??
+    harborData[0];
 
   function submitReport() {
     if (!activeHarbor || reportText.trim().length === 0) return;
-    setTicket(createReport(activeHarbor.id, "设施异常", reportText.trim()));
+    const nextTicket = createReport(activeHarbor.id, "设施异常", reportText.trim());
+    setTickets((current) => [nextTicket, ...current]);
+  }
+
+  function handleFacilityStatusChange(harborId: string, facilityId: string, status: FacilityStatus) {
+    setHarborData((current) => updateFacilityStatus(current, harborId, facilityId, status));
+  }
+
+  function handleHarborStatusChange(harborId: string, status: HarborStatus) {
+    setHarborData((current) => updateHarborStatus(current, harborId, status));
   }
 
   return (
@@ -82,7 +108,19 @@ export function App() {
 
           {parsedNeed.followUp && <p className="notice">{parsedNeed.followUp}</p>}
           {parsedNeed.safetyNotice && <p className="notice warning">{parsedNeed.safetyNotice}</p>}
-          {!hasLocation && <p className="notice">定位被拒绝时，系统会提供区县、商圈或地址输入入口。当前原型默认使用“解放碑”作为手动位置。</p>}
+          {!hasLocation && <p className="notice">定位被拒绝时，系统会提供区县、商圈或地址输入入口。当前原型使用下方选择的位置继续推荐。</p>}
+          {!hasLocation && (
+            <div className="manual-location">
+              <label htmlFor="manual-location">选择手动位置</label>
+              <select id="manual-location" value={manualLocationId} onChange={(event) => setManualLocationId(event.target.value)}>
+                {manualLocations.map((location) => (
+                  <option key={location.id} value={location.id}>
+                    {location.district} - {location.businessArea}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="panel recommendation-panel">
@@ -98,16 +136,18 @@ export function App() {
             </div>
           ) : (
             <div className="recommendation-list">
+              {recommendationResult.fallbackUsed && recommendationResult.message && <p className="notice warning">{recommendationResult.message}</p>}
               {recommendations.map((item) => (
                 <RecommendationCard
                   key={item.harbor.id}
                   item={item}
                   selected={activeHarbor.id === item.harbor.id}
-                  onSelect={() => setSelectedHarbor(item.harbor)}
+                  onSelect={() => setSelectedHarborId(item.harbor.id)}
                 />
               ))}
             </div>
           )}
+          <RecommendationLog resultCount={recommendations.length} fallbackUsed={recommendationResult.fallbackUsed} selectedLocation={hasLocation ? "定位位置" : manualLocation.label} />
         </div>
 
         <HarborDetail harbor={activeHarbor} />
@@ -123,17 +163,35 @@ export function App() {
             提交文字反馈
           </button>
           <p className="muted">图片上传是 P0-E，失败时不阻断文字反馈。</p>
-          {ticket && (
+          {tickets[0] && (
             <div className="ticket">
               <strong>已生成工单</strong>
-              <span>反馈编号：{ticket.reportId}</span>
-              <span>工单编号：{ticket.workOrderId}</span>
+              <span>反馈编号：{tickets[0].reportId}</span>
+              <span>工单编号：{tickets[0].workOrderId}</span>
               <span>状态：待处理</span>
             </div>
           )}
         </section>
+
+        <AdminPanel
+          harbors={harborData}
+          tickets={tickets}
+          onFacilityStatusChange={handleFacilityStatusChange}
+          onHarborStatusChange={handleHarborStatusChange}
+        />
       </section>
     </main>
+  );
+}
+
+function RecommendationLog({ resultCount, fallbackUsed, selectedLocation }: { resultCount: number; fallbackUsed: boolean; selectedLocation: string }) {
+  return (
+    <div className="log-card">
+      <strong>推荐日志预览</strong>
+      <span>result_count: {resultCount}</span>
+      <span>fallback_used: {String(fallbackUsed)}</span>
+      <span>location_source: {selectedLocation}</span>
+    </div>
   );
 }
 
@@ -199,6 +257,77 @@ function HarborDetail({ harbor }: { harbor: Harbor }) {
         打开导航
       </button>
       <p className="muted">地图接口失败时，原型会降级展示地址和直线距离，不编造步行时间。</p>
+    </section>
+  );
+}
+
+function AdminPanel({
+  harbors,
+  tickets,
+  onFacilityStatusChange,
+  onHarborStatusChange,
+}: {
+  harbors: Harbor[];
+  tickets: ReportTicket[];
+  onFacilityStatusChange: (harborId: string, facilityId: string, status: FacilityStatus) => void;
+  onHarborStatusChange: (harborId: string, status: HarborStatus) => void;
+}) {
+  return (
+    <section className="panel admin-panel">
+      <div className="panel-title">
+        <Wrench size={20} />
+        <h2>简易管理入口</h2>
+      </div>
+
+      <div className="admin-summary">
+        <span>港湾：{harbors.length}</span>
+        <span>待处理工单：{tickets.length}</span>
+        <span>异常设施：{harbors.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length}</span>
+      </div>
+
+      <div className="admin-list">
+        {harbors.map((harbor) => (
+          <article key={harbor.id} className="admin-item">
+            <div className="admin-item-header">
+              <strong>{harbor.name}</strong>
+              <select value={harbor.status} onChange={(event) => onHarborStatusChange(harbor.id, event.target.value as HarborStatus)}>
+                <option value="open">开放</option>
+                <option value="temp_closed">临时关闭</option>
+                <option value="closed">关闭</option>
+              </select>
+            </div>
+            <p className="muted">{harbor.district} / {harbor.businessArea} / 更新：{harbor.updatedAt}</p>
+            <div className="facility-admin-list">
+              {harbor.facilities.map((facility) => (
+                <label key={facility.id}>
+                  <span>{facility.name}</span>
+                  <select value={facility.status} onChange={(event) => onFacilityStatusChange(harbor.id, facility.id, event.target.value as FacilityStatus)}>
+                    <option value="normal">正常</option>
+                    <option value="fault">故障</option>
+                    <option value="maintenance">维护中</option>
+                    <option value="unknown">未知</option>
+                  </select>
+                </label>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="work-order-list">
+        <strong>工单列表</strong>
+        {tickets.length === 0 ? (
+          <p className="muted">暂无工单。提交一次文字反馈后会自动生成。</p>
+        ) : (
+          tickets.map((ticket) => (
+            <div key={ticket.workOrderId} className="work-order-item">
+              <span>{ticket.workOrderId}</span>
+              <span>{ticket.harborId}</span>
+              <span>{ticket.description}</span>
+            </div>
+          ))
+        )}
+      </div>
     </section>
   );
 }
