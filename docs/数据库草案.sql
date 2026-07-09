@@ -48,6 +48,8 @@ CREATE TABLE report (
   category TEXT NOT NULL,
   description TEXT NOT NULL,
   image_url TEXT,
+  image_upload_status TEXT NOT NULL DEFAULT 'not_provided' CHECK (image_upload_status IN ('not_provided', 'uploaded', 'failed')),
+  image_upload_note TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'resolved', 'rejected')),
   created_at TEXT NOT NULL,
   FOREIGN KEY (harbor_id) REFERENCES harbor(id)

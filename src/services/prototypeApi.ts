@@ -33,6 +33,9 @@ export interface ReportRequest {
   harborId: string;
   category: string;
   description: string;
+  imageUrl?: string;
+  imageUploadStatus?: ReportTicket["imageUploadStatus"];
+  imageUploadNote?: string;
 }
 
 export const prototypeApi = {
@@ -71,7 +74,11 @@ export const prototypeApi = {
   },
 
   createReport(request: ReportRequest): ReportTicket {
-    return createReport(request.harborId, request.category, request.description);
+    return createReport(request.harborId, request.category, request.description, {
+      imageUrl: request.imageUrl,
+      imageUploadStatus: request.imageUploadStatus,
+      imageUploadNote: request.imageUploadNote,
+    });
   },
 
   updateFacilityStatus(harbors: Harbor[], harborId: string, facilityId: string, status: FacilityStatus): Harbor[] {

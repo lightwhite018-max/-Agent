@@ -8,6 +8,7 @@ import {
   getContractColumns,
   harborFieldContracts,
   harborStatusValues,
+  imageUploadStatusValues,
   reportFieldContracts,
   workOrderFieldContracts,
 } from "./schemaContracts";
@@ -55,6 +56,10 @@ describe("schemaContracts", () => {
     }
 
     for (const value of facilityStatusValues) {
+      expect(sql).toContain(`'${value}'`);
+    }
+
+    for (const value of imageUploadStatusValues) {
       expect(sql).toContain(`'${value}'`);
     }
   });

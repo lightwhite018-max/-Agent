@@ -39,6 +39,7 @@ describe("appStorage", () => {
           harborId: "HB001",
           category: "设施异常",
           description: "饮水机没水",
+          imageUploadStatus: "not_provided",
           status: "pending",
           createdAt: "2026-07-08 20:00",
         },

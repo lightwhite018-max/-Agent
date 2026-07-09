@@ -85,6 +85,9 @@ export interface ReportTicket {
   harborId: string;
   category: string;
   description: string;
+  imageUrl?: string;
+  imageUploadStatus: "not_provided" | "uploaded" | "failed";
+  imageUploadNote?: string;
   status: "pending";
   createdAt: string;
 }

@@ -10,6 +10,7 @@ export const crowdLevelValues = ["quiet", "moderate", "crowded", "unknown"] as c
 export const dataFreshnessValues = ["fresh", "stale"] as const;
 export const facilityTypeValues = ["drinking_water", "charging", "rest", "indoor", "toilet", "microwave", "first_aid", "hot_water", "umbrella"] as const;
 export const facilityStatusValues = ["normal", "fault", "maintenance", "unknown"] as const;
+export const imageUploadStatusValues = ["not_provided", "uploaded", "failed"] as const;
 export const reportStatusValues = ["pending", "processing", "resolved", "rejected"] as const;
 export const workOrderStatusValues = ["pending", "processing", "resolved", "closed"] as const;
 
@@ -47,6 +48,8 @@ export const reportFieldContracts: FieldContract[] = [
   { field: "category", column: "category", required: true },
   { field: "description", column: "description", required: true },
   { field: "imageUrl", column: "image_url", required: false },
+  { field: "imageUploadStatus", column: "image_upload_status", required: true, enumValues: imageUploadStatusValues },
+  { field: "imageUploadNote", column: "image_upload_note", required: false },
   { field: "status", column: "status", required: true, enumValues: reportStatusValues },
   { field: "createdAt", column: "created_at", required: true },
 ];

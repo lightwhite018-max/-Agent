@@ -11,6 +11,7 @@ import { prototypeApi } from "./services/prototypeApi";
 import type { FacilityStatus, HarborStatus, ReportTicket } from "./types";
 
 type AppView = "worker" | "admin" | "acceptance";
+type FeedbackImageState = "none" | "attached" | "failed";
 
 export function App() {
   const initialState = useMemo(() => prototypeApi.loadState(), []);
@@ -21,6 +22,7 @@ export function App() {
   const [manualLocationId, setManualLocationId] = useState(manualLocations[0].id);
   const [selectedHarborId, setSelectedHarborId] = useState<string | null>(null);
   const [reportText, setReportText] = useState("饮水机没水");
+  const [feedbackImageState, setFeedbackImageState] = useState<FeedbackImageState>("none");
   const [tickets, setTickets] = useState<ReportTicket[]>(initialState.tickets);
 
   useEffect(() => {
@@ -60,6 +62,9 @@ export function App() {
       harborId: activeHarbor.id,
       category: "设施异常",
       description: reportText.trim(),
+      imageUrl: feedbackImageState === "attached" ? `mock://feedback/${activeHarbor.id}.jpg` : undefined,
+      imageUploadStatus: feedbackImageState === "attached" ? "uploaded" : feedbackImageState === "failed" ? "failed" : "not_provided",
+      imageUploadNote: feedbackImageState === "failed" ? "图片上传失败，已按文字反馈继续生成工单。" : undefined,
     });
     setTickets((current) => [nextTicket, ...current]);
   }
@@ -152,8 +157,10 @@ export function App() {
           <FeedbackPanel
             activeHarbor={activeHarbor}
             reportText={reportText}
+            imageState={feedbackImageState}
             latestTicket={tickets[0]}
             onReportTextChange={setReportText}
+            onImageStateChange={setFeedbackImageState}
             onSubmitReport={submitReport}
           />
         </section>

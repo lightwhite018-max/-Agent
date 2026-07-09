@@ -586,6 +586,33 @@ textarea {
   margin-bottom: 10px;
 }
 
+.feedback-image-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.feedback-image-tools button {
+  border: 1px solid #cbd9cf;
+  border-radius: 8px;
+  background: #fbfdfb;
+  color: #204c38;
+  padding: 9px 10px;
+}
+
+.feedback-image-tools button.active {
+  border-color: #256b4a;
+  background: #e2f1e6;
+  font-weight: 700;
+}
+
+.feedback-image-tools .warning-button.active {
+  border-color: #bd7b2d;
+  background: #fff5e8;
+  color: #6b4018;
+}
+
 .admin-panel {
   grid-column: 1 / -1;
 }
