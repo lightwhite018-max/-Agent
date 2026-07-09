@@ -3,6 +3,7 @@ import { getRuntimeConfig } from "../config/runtimeConfig";
 import { updateFacilityStatus, updateHarborStatus, updateWorkOrderStatus } from "../features/admin/harborAdmin";
 import { parseNeed } from "../features/agent/parseNeed";
 import { createReport } from "../features/feedback/createReport";
+import { createRecommendationLog } from "../features/logging/createRecommendationLog";
 import { clearAppState, getBrowserStorage, loadAppState, saveAppState, type StorageLike } from "../features/persistence/appStorage";
 import { recommendHarborsWithFallback } from "../features/recommendation/recommend";
 import { getExternalServiceStatus, getNavigationPreview, getWeatherPreview } from "./externalServices";
@@ -13,6 +14,7 @@ import type {
   HarborStatus,
   ManualLocation,
   ParsedNeed,
+  RecommendationLogEntry,
   RecommendationResult,
   ReportTicket,
   WorkOrderStatus,
@@ -54,6 +56,7 @@ export const prototypeApi = {
       schemaVersion: 1,
       harbors: seedHarbors,
       tickets: [],
+      recommendationLogs: [],
     };
   },
 
@@ -80,6 +83,10 @@ export const prototypeApi = {
       imageUploadStatus: request.imageUploadStatus,
       imageUploadNote: request.imageUploadNote,
     });
+  },
+
+  createRecommendationLog(parsedNeed: ParsedNeed, recommendationResult: RecommendationResult, locationSource: string): RecommendationLogEntry {
+    return createRecommendationLog(parsedNeed, recommendationResult, locationSource);
   },
 
   updateFacilityStatus(harbors: Harbor[], harborId: string, facilityId: string, status: FacilityStatus): Harbor[] {

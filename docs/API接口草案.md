@@ -108,6 +108,35 @@
 - 无完全匹配结果时返回 fallbackUsed=true，并提供不完全匹配的开放港湾。
 - 地图 API 失败时不编造步行时间。
 
+### POST /api/recommendation-logs
+
+用途：保存一次推荐复盘记录，便于后续验收、运营分析和推荐规则调优。
+
+请求体：
+
+```json
+{
+  "userInput": "我想喝水",
+  "intent": "query_facility",
+  "facilityTypes": ["drinking_water"],
+  "locationSource": "定位位置",
+  "resultCount": 2,
+  "resultHarborIds": ["HB005", "HB001"],
+  "fallbackUsed": false,
+  "noResultReason": null
+}
+```
+
+### GET /api/recommendation-logs
+
+用途：查看最近推荐日志。
+
+请求参数：
+
+| 参数 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| limit | number | 否 | 默认返回最近 10 条 |
+
 ## 5. 反馈与工单
 
 ### POST /api/reports

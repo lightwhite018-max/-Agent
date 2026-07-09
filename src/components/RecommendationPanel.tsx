@@ -1,15 +1,25 @@
 import { AlertTriangle, Clock, MapPin, Navigation } from "lucide-react";
-import type { Recommendation, RecommendationResult } from "../types";
+import type { Recommendation, RecommendationLogEntry, RecommendationResult } from "../types";
 
 interface RecommendationPanelProps {
   recommendations: Recommendation[];
   recommendationResult: RecommendationResult;
   activeHarborId: string;
   selectedLocation: string;
+  recommendationLogs: RecommendationLogEntry[];
   onSelectHarbor: (harborId: string) => void;
+  onSaveRecommendationLog: () => void;
 }
 
-export function RecommendationPanel({ recommendations, recommendationResult, activeHarborId, selectedLocation, onSelectHarbor }: RecommendationPanelProps) {
+export function RecommendationPanel({
+  recommendations,
+  recommendationResult,
+  activeHarborId,
+  selectedLocation,
+  recommendationLogs,
+  onSelectHarbor,
+  onSaveRecommendationLog,
+}: RecommendationPanelProps) {
   return (
     <div className="panel recommendation-panel">
       <div className="panel-title">
@@ -30,18 +40,53 @@ export function RecommendationPanel({ recommendations, recommendationResult, act
           ))}
         </div>
       )}
-      <RecommendationLog resultCount={recommendations.length} fallbackUsed={recommendationResult.fallbackUsed} selectedLocation={selectedLocation} />
+      <RecommendationLog resultCount={recommendations.length} fallbackUsed={recommendationResult.fallbackUsed} selectedLocation={selectedLocation} onSaveRecommendationLog={onSaveRecommendationLog} />
+      <RecommendationLogHistory logs={recommendationLogs} />
     </div>
   );
 }
 
-function RecommendationLog({ resultCount, fallbackUsed, selectedLocation }: { resultCount: number; fallbackUsed: boolean; selectedLocation: string }) {
+function RecommendationLog({
+  resultCount,
+  fallbackUsed,
+  selectedLocation,
+  onSaveRecommendationLog,
+}: {
+  resultCount: number;
+  fallbackUsed: boolean;
+  selectedLocation: string;
+  onSaveRecommendationLog: () => void;
+}) {
   return (
     <div className="log-card">
       <strong>推荐日志预览</strong>
       <span>result_count: {resultCount}</span>
       <span>fallback_used: {String(fallbackUsed)}</span>
       <span>location_source: {selectedLocation}</span>
+      <button type="button" onClick={onSaveRecommendationLog}>
+        保存本次推荐日志
+      </button>
+    </div>
+  );
+}
+
+function RecommendationLogHistory({ logs }: { logs: RecommendationLogEntry[] }) {
+  if (logs.length === 0) {
+    return <p className="muted">暂无已保存推荐日志。</p>;
+  }
+
+  return (
+    <div className="log-history">
+      <strong>最近推荐日志</strong>
+      {logs.slice(0, 3).map((log) => (
+        <div key={log.id} className="log-history-item">
+          <span>{log.createdAt}</span>
+          <span>{log.userInput}</span>
+          <span>
+            {log.resultCount} 个结果 / 降级：{String(log.fallbackUsed)}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }

@@ -80,6 +80,19 @@ export interface RecommendationResult {
   noResultReason?: "no_open_harbor" | "no_facility_match";
 }
 
+export interface RecommendationLogEntry {
+  id: string;
+  userInput: string;
+  intent: Intent;
+  facilityTypes: FacilityType[];
+  locationSource: string;
+  resultCount: number;
+  resultHarborIds: string[];
+  fallbackUsed: boolean;
+  noResultReason?: RecommendationResult["noResultReason"];
+  createdAt: string;
+}
+
 export interface ReportTicket {
   reportId: string;
   workOrderId: string;
@@ -97,4 +110,5 @@ export interface AppPersistedState {
   schemaVersion: 1;
   harbors: Harbor[];
   tickets: ReportTicket[];
+  recommendationLogs: RecommendationLogEntry[];
 }

@@ -25,6 +25,7 @@ describe("appStorage", () => {
 
     expect(state.harbors).toHaveLength(harbors.length);
     expect(state.tickets).toEqual([]);
+    expect(state.recommendationLogs).toEqual([]);
   });
 
   it("保存后可以重新读取", () => {
@@ -32,6 +33,19 @@ describe("appStorage", () => {
     const state: AppPersistedState = {
       schemaVersion: 1,
       harbors,
+      recommendationLogs: [
+        {
+          id: "RL001",
+          userInput: "我想喝水",
+          intent: "query_facility",
+          facilityTypes: ["drinking_water"],
+          locationSource: "定位位置",
+          resultCount: 1,
+          resultHarborIds: ["HB001"],
+          fallbackUsed: false,
+          createdAt: "2026-07-09 21:40",
+        },
+      ],
       tickets: [
         {
           reportId: "RP001",
@@ -51,9 +65,23 @@ describe("appStorage", () => {
     expect(loadAppState(storage, [])).toEqual(state);
   });
 
+  it("读取旧版本本地数据时自动补齐推荐日志", () => {
+    const storage = new MemoryStorage();
+    storage.setItem(
+      "labor-harbor-agent:v1",
+      JSON.stringify({
+        schemaVersion: 1,
+        harbors,
+        tickets: [],
+      }),
+    );
+
+    expect(loadAppState(storage, []).recommendationLogs).toEqual([]);
+  });
+
   it("可以清空本地数据并回到样例数据", () => {
     const storage = new MemoryStorage();
-    saveAppState(storage, { schemaVersion: 1, harbors: [], tickets: [] });
+    saveAppState(storage, { schemaVersion: 1, harbors: [], tickets: [], recommendationLogs: [] });
     clearAppState(storage);
 
     expect(loadAppState(storage, harbors).harbors).toHaveLength(harbors.length);

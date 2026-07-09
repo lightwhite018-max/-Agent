@@ -78,6 +78,21 @@ describe("prototypeApi", () => {
     expect(updated[0].status).toBe("resolved");
   });
 
+  it("可以创建并持久化推荐日志", () => {
+    const storage = new MemoryStorage();
+    const state = prototypeApi.loadState(storage);
+    const response = prototypeApi.getRecommendations({
+      text: "我想喝水",
+      hasLocation: true,
+      harbors: state.harbors,
+    });
+    const log = prototypeApi.createRecommendationLog(response.parsedNeed, response.recommendationResult, "定位位置");
+
+    prototypeApi.saveState({ ...state, recommendationLogs: [log] }, storage);
+
+    expect(prototypeApi.loadState(storage).recommendationLogs[0].userInput).toBe("我想喝水");
+  });
+
   it("暴露外部服务运行状态", () => {
     expect(prototypeApi.getRuntimeStatus().api).toBe("local");
     expect(prototypeApi.getWeatherPreview().message).toContain("不阻断");

@@ -1,4 +1,4 @@
-import type { AppPersistedState, Harbor, ReportTicket } from "../../types";
+import type { AppPersistedState, Harbor } from "../../types";
 
 const STORAGE_KEY = "labor-harbor-agent:v1";
 
@@ -24,7 +24,10 @@ export function loadAppState(storage: StorageLike | undefined, fallbackHarbors: 
       return createFallbackState(fallbackHarbors);
     }
 
-    return parsed;
+    return {
+      ...parsed,
+      recommendationLogs: parsed.recommendationLogs ?? [],
+    };
   } catch {
     return createFallbackState(fallbackHarbors);
   }
@@ -50,6 +53,7 @@ function createFallbackState(fallbackHarbors: Harbor[]): AppPersistedState {
     schemaVersion: 1,
     harbors: fallbackHarbors,
     tickets: [],
+    recommendationLogs: [],
   };
 }
 

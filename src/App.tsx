@@ -8,7 +8,7 @@ import { RecommendationPanel } from "./components/RecommendationPanel";
 import { RequestPanel } from "./components/RequestPanel";
 import { manualLocations } from "./data/locations";
 import { prototypeApi } from "./services/prototypeApi";
-import type { FacilityStatus, HarborStatus, ReportTicket, WorkOrderStatus } from "./types";
+import type { FacilityStatus, HarborStatus, RecommendationLogEntry, ReportTicket, WorkOrderStatus } from "./types";
 
 type AppView = "worker" | "admin" | "acceptance";
 type FeedbackImageState = "none" | "attached" | "failed";
@@ -24,14 +24,16 @@ export function App() {
   const [reportText, setReportText] = useState("饮水机没水");
   const [feedbackImageState, setFeedbackImageState] = useState<FeedbackImageState>("none");
   const [tickets, setTickets] = useState<ReportTicket[]>(initialState.tickets);
+  const [recommendationLogs, setRecommendationLogs] = useState<RecommendationLogEntry[]>(initialState.recommendationLogs);
 
   useEffect(() => {
     prototypeApi.saveState({
       schemaVersion: 1,
       harbors: harborData,
       tickets,
+      recommendationLogs,
     });
-  }, [harborData, tickets]);
+  }, [harborData, tickets, recommendationLogs]);
 
   const manualLocation = manualLocations.find((location) => location.id === manualLocationId) ?? manualLocations[0];
   const recommendationResponse = useMemo(
@@ -81,10 +83,16 @@ export function App() {
     setTickets((current) => prototypeApi.updateWorkOrderStatus(current, workOrderId, status));
   }
 
+  function saveRecommendationLog() {
+    const nextLog = prototypeApi.createRecommendationLog(parsedNeed, recommendationResult, hasLocation ? "定位位置" : manualLocation.label);
+    setRecommendationLogs((current) => [nextLog, ...current].slice(0, 10));
+  }
+
   function resetDemoData() {
     const nextState = prototypeApi.resetState();
     setHarborData(nextState.harbors);
     setTickets(nextState.tickets);
+    setRecommendationLogs(nextState.recommendationLogs);
     setSelectedHarborId(null);
   }
 
@@ -153,7 +161,9 @@ export function App() {
             recommendationResult={recommendationResult}
             activeHarborId={activeHarbor.id}
             selectedLocation={hasLocation ? "定位位置" : manualLocation.label}
+            recommendationLogs={recommendationLogs}
             onSelectHarbor={setSelectedHarborId}
+            onSaveRecommendationLog={saveRecommendationLog}
           />
 
           <HarborDetailPanel harbor={activeHarbor} navigationPreview={navigationPreview} />

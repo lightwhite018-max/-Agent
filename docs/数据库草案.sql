@@ -84,6 +84,7 @@ CREATE TABLE recommendation_log (
   id TEXT PRIMARY KEY,
   need_type TEXT NOT NULL,
   filters TEXT NOT NULL,
+  location_source TEXT,
   candidate_count INTEGER NOT NULL DEFAULT 0,
   result_harbor_ids TEXT NOT NULL,
   score_detail TEXT,
