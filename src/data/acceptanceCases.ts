@@ -8,13 +8,21 @@ export interface AcceptanceCase {
   evidence: string;
 }
 
+export interface AcceptanceSummary {
+  covered: number;
+  enhanced: number;
+  pending: number;
+  total: number;
+  demoReadyRate: number;
+}
+
 export const acceptanceCases: AcceptanceCase[] = [
   {
     id: "AC-001",
     title: "自然语言喝水推荐",
     status: "covered",
     scenario: "用户输入“我想喝水”",
-    evidence: "规则 Agent 识别 drinking_water，推荐 HB001，过滤无饮水设施和关闭港湾。",
+    evidence: "规则 Agent 识别 drinking_water，推荐可用饮水港湾，并过滤无饮水设施和关闭港湾。",
   },
   {
     id: "AC-002",
@@ -68,9 +76,9 @@ export const acceptanceCases: AcceptanceCase[] = [
   {
     id: "AC-009",
     title: "地图路线",
-    status: "pending",
+    status: "enhanced",
     scenario: "用户点击导航",
-    evidence: "当前仅保留导航入口与降级说明，真实路线待地图 API 接入。",
+    evidence: "详情页可点击查看目的地、地址和直线距离降级结果，真实路线待地图 API 接入。",
   },
   {
     id: "AC-010",
@@ -98,14 +106,14 @@ export const acceptanceCases: AcceptanceCase[] = [
     title: "图片反馈降级",
     status: "enhanced",
     scenario: "图片上传失败",
-    evidence: "当前原型将图片设为 P0-E，文字反馈不被阻断。",
+    evidence: "可模拟图片上传失败，系统继续按文字反馈生成工单，并记录降级说明。",
   },
   {
     id: "AC-014",
     title: "工单生成",
     status: "covered",
     scenario: "有效反馈提交成功",
-    evidence: "自动生成 pending 工单，管理端可查看。",
+    evidence: "自动生成 pending 工单，管理端可查看并推进为 processing/resolved/closed。",
   },
   {
     id: "AC-015",
@@ -115,3 +123,20 @@ export const acceptanceCases: AcceptanceCase[] = [
     evidence: "详情页展示“信息更新时间较早，请谨慎参考”。",
   },
 ];
+
+export function getAcceptanceSummary(cases: AcceptanceCase[] = acceptanceCases): AcceptanceSummary {
+  const counts = cases.reduce(
+    (total, item) => ({
+      ...total,
+      [item.status]: total[item.status] + 1,
+    }),
+    { covered: 0, enhanced: 0, pending: 0 },
+  );
+  const demoReadyCount = counts.covered + counts.enhanced;
+
+  return {
+    ...counts,
+    total: cases.length,
+    demoReadyRate: cases.length === 0 ? 0 : Math.round((demoReadyCount / cases.length) * 100),
+  };
+}

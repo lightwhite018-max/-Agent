@@ -1,5 +1,5 @@
 import { CheckCircle2, CircleDashed, Clock3 } from "lucide-react";
-import { acceptanceCases, type AcceptanceCase, type AcceptanceStatus } from "../data/acceptanceCases";
+import { acceptanceCases, getAcceptanceSummary, type AcceptanceCase, type AcceptanceStatus } from "../data/acceptanceCases";
 
 const statusText: Record<AcceptanceStatus, string> = {
   covered: "已覆盖",
@@ -8,13 +8,7 @@ const statusText: Record<AcceptanceStatus, string> = {
 };
 
 export function AcceptancePanel() {
-  const counts = acceptanceCases.reduce(
-    (total, item) => ({
-      ...total,
-      [item.status]: total[item.status] + 1,
-    }),
-    { covered: 0, enhanced: 0, pending: 0 },
-  );
+  const summary = getAcceptanceSummary();
 
   return (
     <section className="acceptance-view">
@@ -24,13 +18,16 @@ export function AcceptancePanel() {
           <h2>核心闭环已进入可演示状态</h2>
           <p className="muted">清单将 PRD 验收标准转成作品集可讲述的状态视图，区分已覆盖、演示增强和待接入能力。</p>
         </div>
-        <strong>{Math.round((counts.covered / acceptanceCases.length) * 100)}%</strong>
+        <div className="acceptance-rate">
+          <span>可演示完成度</span>
+          <strong>{summary.demoReadyRate}%</strong>
+        </div>
       </div>
 
       <div className="acceptance-summary">
-        <SummaryCard label="已覆盖" value={counts.covered} status="covered" />
-        <SummaryCard label="演示增强" value={counts.enhanced} status="enhanced" />
-        <SummaryCard label="待接入" value={counts.pending} status="pending" />
+        <SummaryCard label="已覆盖" value={summary.covered} status="covered" />
+        <SummaryCard label="演示增强" value={summary.enhanced} status="enhanced" />
+        <SummaryCard label="待接入" value={summary.pending} status="pending" />
       </div>
 
       <div className="acceptance-list">
