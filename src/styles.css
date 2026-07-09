@@ -205,6 +205,63 @@ h3 {
   gap: 18px;
 }
 
+.portfolio-view {
+  display: grid;
+  gap: 16px;
+}
+
+.portfolio-hero {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.portfolio-hero h2 {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.portfolio-badge {
+  border-radius: 999px;
+  background: #e2f1e6;
+  color: #1f573c;
+  font-weight: 700;
+  padding: 10px 12px;
+  white-space: nowrap;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.portfolio-card {
+  box-shadow: none;
+}
+
+.portfolio-card svg {
+  color: #256b4a;
+}
+
+.portfolio-card h3 {
+  margin-top: 10px;
+}
+
+.portfolio-card p {
+  color: #526158;
+  margin-bottom: 0;
+}
+
+.portfolio-script ol,
+.portfolio-script ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 22px;
+}
+
 .acceptance-view {
   display: grid;
   gap: 16px;
@@ -833,6 +890,7 @@ textarea {
   .detail-grid,
   .admin-summary,
   .acceptance-summary,
+  .portfolio-grid,
   .facility-admin-list,
   .work-order-item {
     grid-template-columns: 1fr;
@@ -856,6 +914,7 @@ textarea {
   .detail-heading,
   .acceptance-item-header,
   .acceptance-hero,
+  .portfolio-hero,
   .card-action-row {
     flex-direction: column;
   }

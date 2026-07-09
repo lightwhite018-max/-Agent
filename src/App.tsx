@@ -4,6 +4,7 @@ import { AcceptancePanel } from "./components/AcceptancePanel";
 import { ExternalStatusBar } from "./components/ExternalStatusBar";
 import { FeedbackPanel } from "./components/FeedbackPanel";
 import { HarborDetailPanel } from "./components/HarborDetailPanel";
+import { PortfolioPanel } from "./components/PortfolioPanel";
 import { RecommendationPanel } from "./components/RecommendationPanel";
 import { RequestPanel } from "./components/RequestPanel";
 import { feedbackCategories, type FeedbackCategory } from "./data/feedbackCategories";
@@ -12,12 +13,12 @@ import { getDemoMetrics } from "./features/dashboard/demoMetrics";
 import { prototypeApi } from "./services/prototypeApi";
 import type { FacilityStatus, HarborStatus, RecommendationLogEntry, ReportTicket, WorkOrderStatus } from "./types";
 
-type AppView = "worker" | "admin" | "acceptance";
+type AppView = "portfolio" | "worker" | "admin" | "acceptance";
 type FeedbackImageState = "none" | "attached" | "failed";
 
 export function App() {
   const initialState = useMemo(() => prototypeApi.loadState(), []);
-  const [activeView, setActiveView] = useState<AppView>("worker");
+  const [activeView, setActiveView] = useState<AppView>("portfolio");
   const [query, setQuery] = useState("我想喝水");
   const [harborData, setHarborData] = useState(initialState.harbors);
   const [hasLocation, setHasLocation] = useState(true);
@@ -137,6 +138,9 @@ export function App() {
       <ExternalStatusBar status={runtimeStatus} weatherText={weatherPreview.weatherText} weatherMessage={weatherPreview.message} />
 
       <nav className="view-tabs" aria-label="原型视图">
+        <button className={activeView === "portfolio" ? "active" : ""} type="button" onClick={() => setActiveView("portfolio")}>
+          作品集说明
+        </button>
         <button className={activeView === "worker" ? "active" : ""} type="button" onClick={() => setActiveView("worker")}>
           用户端体验
         </button>
@@ -148,7 +152,9 @@ export function App() {
         </button>
       </nav>
 
-      {activeView === "worker" ? (
+      {activeView === "portfolio" ? (
+        <PortfolioPanel />
+      ) : activeView === "worker" ? (
         <section className="workspace-grid">
           <RequestPanel
             query={query}
