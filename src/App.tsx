@@ -6,6 +6,7 @@ import { FeedbackPanel } from "./components/FeedbackPanel";
 import { HarborDetailPanel } from "./components/HarborDetailPanel";
 import { RecommendationPanel } from "./components/RecommendationPanel";
 import { RequestPanel } from "./components/RequestPanel";
+import { feedbackCategories, type FeedbackCategory } from "./data/feedbackCategories";
 import { manualLocations } from "./data/locations";
 import { getDemoMetrics } from "./features/dashboard/demoMetrics";
 import { prototypeApi } from "./services/prototypeApi";
@@ -22,6 +23,7 @@ export function App() {
   const [hasLocation, setHasLocation] = useState(true);
   const [manualLocationId, setManualLocationId] = useState(manualLocations[0].id);
   const [selectedHarborId, setSelectedHarborId] = useState<string | null>(null);
+  const [reportCategory, setReportCategory] = useState<FeedbackCategory>(feedbackCategories[0].value);
   const [reportText, setReportText] = useState("饮水机没水");
   const [feedbackImageState, setFeedbackImageState] = useState<FeedbackImageState>("none");
   const [tickets, setTickets] = useState<ReportTicket[]>(initialState.tickets);
@@ -63,7 +65,7 @@ export function App() {
     if (!activeHarbor || reportText.trim().length === 0) return;
     const nextTicket = prototypeApi.createReport({
       harborId: activeHarbor.id,
-      category: "设施异常",
+      category: reportCategory,
       description: reportText.trim(),
       imageUrl: feedbackImageState === "attached" ? `mock://feedback/${activeHarbor.id}.jpg` : undefined,
       imageUploadStatus: feedbackImageState === "attached" ? "uploaded" : feedbackImageState === "failed" ? "failed" : "not_provided",
@@ -171,9 +173,11 @@ export function App() {
 
           <FeedbackPanel
             activeHarbor={activeHarbor}
+            reportCategory={reportCategory}
             reportText={reportText}
             imageState={feedbackImageState}
             latestTicket={tickets[0]}
+            onReportCategoryChange={setReportCategory}
             onReportTextChange={setReportText}
             onImageStateChange={setFeedbackImageState}
             onSubmitReport={submitReport}

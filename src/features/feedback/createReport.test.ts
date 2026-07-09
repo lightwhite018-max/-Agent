@@ -23,4 +23,10 @@ describe("createReport", () => {
     expect(ticket.imageUploadStatus).toBe("failed");
     expect(ticket.imageUploadNote).toContain("继续生成工单");
   });
+
+  it("保留用户选择的反馈分类", () => {
+    const ticket = createReport("HB001", "导航错误", "地图入口位置不准确");
+
+    expect(ticket.category).toBe("导航错误");
+  });
 });

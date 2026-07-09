@@ -1,17 +1,30 @@
 import { Wrench } from "lucide-react";
+import { feedbackCategories, type FeedbackCategory } from "../data/feedbackCategories";
 import type { Harbor, ReportTicket } from "../types";
 
 interface FeedbackPanelProps {
   activeHarbor: Harbor;
+  reportCategory: FeedbackCategory;
   reportText: string;
   imageState: "none" | "attached" | "failed";
   latestTicket?: ReportTicket;
+  onReportCategoryChange: (category: FeedbackCategory) => void;
   onReportTextChange: (text: string) => void;
   onImageStateChange: (state: "none" | "attached" | "failed") => void;
   onSubmitReport: () => void;
 }
 
-export function FeedbackPanel({ activeHarbor, reportText, imageState, latestTicket, onReportTextChange, onImageStateChange, onSubmitReport }: FeedbackPanelProps) {
+export function FeedbackPanel({
+  activeHarbor,
+  reportCategory,
+  reportText,
+  imageState,
+  latestTicket,
+  onReportCategoryChange,
+  onReportTextChange,
+  onImageStateChange,
+  onSubmitReport,
+}: FeedbackPanelProps) {
   return (
     <section className="panel feedback-panel">
       <div className="panel-title">
@@ -19,6 +32,17 @@ export function FeedbackPanel({ activeHarbor, reportText, imageState, latestTick
         <h2>反馈与工单</h2>
       </div>
       <p className="muted">当前港湾：{activeHarbor.name}</p>
+      <label className="feedback-category">
+        <span>反馈分类</span>
+        <select value={reportCategory} onChange={(event) => onReportCategoryChange(event.target.value as FeedbackCategory)}>
+          {feedbackCategories.map((category) => (
+            <option key={category.value} value={category.value}>
+              {category.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <p className="muted">{feedbackCategories.find((category) => category.value === reportCategory)?.description}</p>
       <textarea value={reportText} onChange={(event) => onReportTextChange(event.target.value)} rows={4} />
       <div className="feedback-image-tools" aria-label="图片反馈演示">
         <button className={imageState === "attached" ? "active" : ""} type="button" onClick={() => onImageStateChange("attached")}>
@@ -40,6 +64,7 @@ export function FeedbackPanel({ activeHarbor, reportText, imageState, latestTick
           <strong>已生成工单</strong>
           <span>反馈编号：{latestTicket.reportId}</span>
           <span>工单编号：{latestTicket.workOrderId}</span>
+          <span>分类：{latestTicket.category}</span>
           <span>图片状态：{ticketImageStatusText(latestTicket)}</span>
           <span>状态：{workOrderStatusText(latestTicket.status)}</span>
         </div>

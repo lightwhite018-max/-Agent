@@ -598,6 +598,25 @@ textarea {
   margin-bottom: 10px;
 }
 
+.feedback-category {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.feedback-category span {
+  color: #526158;
+  font-size: 0.9rem;
+}
+
+.feedback-category select {
+  border: 1px solid #cbd9cf;
+  border-radius: 8px;
+  background: #fbfdfb;
+  color: #162019;
+  padding: 11px 12px;
+}
+
 .feedback-image-tools {
   display: flex;
   flex-wrap: wrap;
