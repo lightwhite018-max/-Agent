@@ -12,6 +12,7 @@ interface AdminPanelProps {
 
 export function AdminPanel({ harbors, tickets, onFacilityStatusChange, onHarborStatusChange, onWorkOrderStatusChange, onResetDemoData }: AdminPanelProps) {
   const pendingTicketCount = tickets.filter((ticket) => ticket.status === "pending").length;
+  const resolvedTicketCount = tickets.filter((ticket) => ticket.status === "resolved").length;
 
   return (
     <section className="panel admin-panel">
@@ -29,6 +30,7 @@ export function AdminPanel({ harbors, tickets, onFacilityStatusChange, onHarborS
       <div className="admin-summary">
         <span>港湾：{harbors.length}</span>
         <span>待处理工单：{pendingTicketCount}</span>
+        <span>已解决工单：{resolvedTicketCount}</span>
         <span>异常设施：{harbors.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length}</span>
       </div>
 

@@ -7,6 +7,7 @@ import { HarborDetailPanel } from "./components/HarborDetailPanel";
 import { RecommendationPanel } from "./components/RecommendationPanel";
 import { RequestPanel } from "./components/RequestPanel";
 import { manualLocations } from "./data/locations";
+import { getDemoMetrics } from "./features/dashboard/demoMetrics";
 import { prototypeApi } from "./services/prototypeApi";
 import type { FacilityStatus, HarborStatus, RecommendationLogEntry, ReportTicket, WorkOrderStatus } from "./types";
 
@@ -48,7 +49,7 @@ export function App() {
   );
   const { parsedNeed, recommendationResult } = recommendationResponse;
   const recommendations = recommendationResult.items;
-  const abnormalFacilityCount = harborData.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length;
+  const demoMetrics = useMemo(() => getDemoMetrics(harborData, tickets, recommendationLogs), [harborData, tickets, recommendationLogs]);
   const runtimeStatus = useMemo(() => prototypeApi.getRuntimeStatus(), []);
   const weatherPreview = useMemo(() => prototypeApi.getWeatherPreview(parsedNeed.weatherContext), [parsedNeed.weatherContext]);
   const activeHarbor =
@@ -100,7 +101,7 @@ export function App() {
     <main className="app-shell">
       <section className="hero-panel">
         <div>
-          <p className="eyebrow">V0.5 可交互原型</p>
+          <p className="eyebrow">V0.7 接入准备原型</p>
           <h1>劳动者港湾智能助手</h1>
           <p className="summary">用一句话或一个快捷入口，找到附近正在开放、设施可用的劳动者港湾。</p>
         </div>
@@ -114,8 +115,8 @@ export function App() {
 
       <section className="kpi-strip" aria-label="原型关键状态">
         <div>
-          <span>推荐结果</span>
-          <strong>{recommendations.length}</strong>
+          <span>开放港湾</span>
+          <strong>{demoMetrics.openHarborCount}</strong>
         </div>
         <div>
           <span>当前港湾</span>
@@ -123,11 +124,11 @@ export function App() {
         </div>
         <div>
           <span>待处理工单</span>
-          <strong>{tickets.length}</strong>
+          <strong>{demoMetrics.pendingWorkOrderCount}</strong>
         </div>
         <div>
-          <span>异常设施</span>
-          <strong>{abnormalFacilityCount}</strong>
+          <span>推荐日志</span>
+          <strong>{demoMetrics.recommendationLogCount}</strong>
         </div>
       </section>
 
