@@ -1,6 +1,6 @@
 # 劳动者港湾智能助手 API 接口草案
 
-更新时间：2026-07-08
+更新时间：2026-07-09
 
 ## 1. 说明
 
@@ -121,7 +121,9 @@
   "harborId": "HB001",
   "category": "设施异常",
   "description": "饮水机没水",
-  "imageUrl": null
+  "imageUrl": null,
+  "imageUploadStatus": "not_provided",
+  "imageUploadNote": null
 }
 ```
 
@@ -131,6 +133,7 @@
 {
   "reportId": "RP000001",
   "workOrderId": "WO000001",
+  "imageUploadStatus": "not_provided",
   "status": "pending"
 }
 ```
@@ -138,6 +141,7 @@
 降级要求：
 
 - 图片上传失败时允许仅文字提交。
+- 图片上传失败时返回 imageUploadStatus=failed，并记录 imageUploadNote。
 - 图片审核未完成时反馈可先进入 pending_review，P0-M 可先不展示图片。
 
 ### GET /api/work-orders
@@ -162,6 +166,12 @@
   "status": "resolved",
   "resultNote": "已补水并完成现场检查"
 }
+```
+
+状态流转：
+
+```text
+pending -> processing -> resolved -> closed
 ```
 
 ## 6. 管理端接口

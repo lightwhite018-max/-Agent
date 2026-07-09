@@ -1,15 +1,18 @@
 import { Wrench } from "lucide-react";
-import type { FacilityStatus, Harbor, HarborStatus, ReportTicket } from "../types";
+import type { FacilityStatus, Harbor, HarborStatus, ReportTicket, WorkOrderStatus } from "../types";
 
 interface AdminPanelProps {
   harbors: Harbor[];
   tickets: ReportTicket[];
   onFacilityStatusChange: (harborId: string, facilityId: string, status: FacilityStatus) => void;
   onHarborStatusChange: (harborId: string, status: HarborStatus) => void;
+  onWorkOrderStatusChange: (workOrderId: string, status: WorkOrderStatus) => void;
   onResetDemoData: () => void;
 }
 
-export function AdminPanel({ harbors, tickets, onFacilityStatusChange, onHarborStatusChange, onResetDemoData }: AdminPanelProps) {
+export function AdminPanel({ harbors, tickets, onFacilityStatusChange, onHarborStatusChange, onWorkOrderStatusChange, onResetDemoData }: AdminPanelProps) {
+  const pendingTicketCount = tickets.filter((ticket) => ticket.status === "pending").length;
+
   return (
     <section className="panel admin-panel">
       <div className="panel-title">
@@ -25,7 +28,7 @@ export function AdminPanel({ harbors, tickets, onFacilityStatusChange, onHarborS
 
       <div className="admin-summary">
         <span>港湾：{harbors.length}</span>
-        <span>待处理工单：{tickets.length}</span>
+        <span>待处理工单：{pendingTicketCount}</span>
         <span>异常设施：{harbors.flatMap((harbor) => harbor.facilities).filter((facility) => facility.status !== "normal").length}</span>
       </div>
 
@@ -69,6 +72,12 @@ export function AdminPanel({ harbors, tickets, onFacilityStatusChange, onHarborS
             <div key={ticket.workOrderId} className="work-order-item">
               <span>{ticket.workOrderId}</span>
               <span>{ticket.harborId}</span>
+              <select value={ticket.status} onChange={(event) => onWorkOrderStatusChange(ticket.workOrderId, event.target.value as WorkOrderStatus)}>
+                <option value="pending">待处理</option>
+                <option value="processing">处理中</option>
+                <option value="resolved">已解决</option>
+                <option value="closed">已关闭</option>
+              </select>
               <span>{ticket.description}</span>
             </div>
           ))

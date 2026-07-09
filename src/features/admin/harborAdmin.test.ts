@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { harbors } from "../../data/harbors";
-import { updateFacilityStatus, updateHarborStatus } from "./harborAdmin";
+import { updateFacilityStatus, updateHarborStatus, updateWorkOrderStatus } from "./harborAdmin";
 
 describe("harborAdmin", () => {
   it("管理员可以把设施标记为故障", () => {
@@ -17,5 +17,26 @@ describe("harborAdmin", () => {
 
     expect(harbor?.status).toBe("temp_closed");
     expect(harbor?.statusReason).toBe("管理员手动更新");
+  });
+
+  it("管理员可以推进工单状态", () => {
+    const updated = updateWorkOrderStatus(
+      [
+        {
+          reportId: "RP001",
+          workOrderId: "WO001",
+          harborId: "HB001",
+          category: "设施异常",
+          description: "饮水机没水",
+          imageUploadStatus: "not_provided",
+          status: "pending",
+          createdAt: "2026-07-09 21:20",
+        },
+      ],
+      "WO001",
+      "processing",
+    );
+
+    expect(updated[0].status).toBe("processing");
   });
 });

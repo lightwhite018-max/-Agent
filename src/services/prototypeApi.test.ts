@@ -67,6 +67,17 @@ describe("prototypeApi", () => {
     expect(prototypeApi.loadState(storage).tickets[0].workOrderId).toBe(ticket.workOrderId);
   });
 
+  it("可以更新工单处理状态", () => {
+    const ticket = prototypeApi.createReport({
+      harborId: "HB001",
+      category: "设施异常",
+      description: "饮水机没水",
+    });
+    const updated = prototypeApi.updateWorkOrderStatus([ticket], ticket.workOrderId, "resolved");
+
+    expect(updated[0].status).toBe("resolved");
+  });
+
   it("暴露外部服务运行状态", () => {
     expect(prototypeApi.getRuntimeStatus().api).toBe("local");
     expect(prototypeApi.getWeatherPreview().message).toContain("不阻断");

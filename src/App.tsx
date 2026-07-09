@@ -8,7 +8,7 @@ import { RecommendationPanel } from "./components/RecommendationPanel";
 import { RequestPanel } from "./components/RequestPanel";
 import { manualLocations } from "./data/locations";
 import { prototypeApi } from "./services/prototypeApi";
-import type { FacilityStatus, HarborStatus, ReportTicket } from "./types";
+import type { FacilityStatus, HarborStatus, ReportTicket, WorkOrderStatus } from "./types";
 
 type AppView = "worker" | "admin" | "acceptance";
 type FeedbackImageState = "none" | "attached" | "failed";
@@ -75,6 +75,10 @@ export function App() {
 
   function handleHarborStatusChange(harborId: string, status: HarborStatus) {
     setHarborData((current) => prototypeApi.updateHarborStatus(current, harborId, status));
+  }
+
+  function handleWorkOrderStatusChange(workOrderId: string, status: WorkOrderStatus) {
+    setTickets((current) => prototypeApi.updateWorkOrderStatus(current, workOrderId, status));
   }
 
   function resetDemoData() {
@@ -171,6 +175,7 @@ export function App() {
             tickets={tickets}
             onFacilityStatusChange={handleFacilityStatusChange}
             onHarborStatusChange={handleHarborStatusChange}
+            onWorkOrderStatusChange={handleWorkOrderStatusChange}
             onResetDemoData={resetDemoData}
           />
         </section>

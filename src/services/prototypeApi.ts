@@ -1,6 +1,6 @@
 import { harbors as seedHarbors } from "../data/harbors";
 import { getRuntimeConfig } from "../config/runtimeConfig";
-import { updateFacilityStatus, updateHarborStatus } from "../features/admin/harborAdmin";
+import { updateFacilityStatus, updateHarborStatus, updateWorkOrderStatus } from "../features/admin/harborAdmin";
 import { parseNeed } from "../features/agent/parseNeed";
 import { createReport } from "../features/feedback/createReport";
 import { clearAppState, getBrowserStorage, loadAppState, saveAppState, type StorageLike } from "../features/persistence/appStorage";
@@ -15,6 +15,7 @@ import type {
   ParsedNeed,
   RecommendationResult,
   ReportTicket,
+  WorkOrderStatus,
 } from "../types";
 
 export interface RecommendationRequest {
@@ -87,6 +88,10 @@ export const prototypeApi = {
 
   updateHarborStatus(harbors: Harbor[], harborId: string, status: HarborStatus): Harbor[] {
     return updateHarborStatus(harbors, harborId, status);
+  },
+
+  updateWorkOrderStatus(tickets: ReportTicket[], workOrderId: string, status: WorkOrderStatus): ReportTicket[] {
+    return updateWorkOrderStatus(tickets, workOrderId, status);
   },
 
   getRuntimeStatus() {

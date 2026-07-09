@@ -703,11 +703,19 @@ textarea {
 
 .work-order-item {
   display: grid;
-  grid-template-columns: 120px 80px 1fr;
+  grid-template-columns: 120px 80px 120px 1fr;
   gap: 8px;
   border-radius: 8px;
   background: #f4f8f5;
   padding: 10px;
+}
+
+.work-order-item select {
+  border: 1px solid #cbd9cf;
+  border-radius: 8px;
+  background: #fbfdfb;
+  color: #162019;
+  padding: 8px 10px;
 }
 
 .ticket {

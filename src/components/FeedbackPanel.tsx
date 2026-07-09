@@ -41,7 +41,7 @@ export function FeedbackPanel({ activeHarbor, reportText, imageState, latestTick
           <span>反馈编号：{latestTicket.reportId}</span>
           <span>工单编号：{latestTicket.workOrderId}</span>
           <span>图片状态：{ticketImageStatusText(latestTicket)}</span>
-          <span>状态：待处理</span>
+          <span>状态：{workOrderStatusText(latestTicket.status)}</span>
         </div>
       )}
     </section>
@@ -58,4 +58,15 @@ function ticketImageStatusText(ticket: ReportTicket) {
   if (ticket.imageUploadStatus === "uploaded") return "已附带图片";
   if (ticket.imageUploadStatus === "failed") return ticket.imageUploadNote ?? "上传失败，已降级为文字反馈";
   return "未上传图片";
+}
+
+function workOrderStatusText(status: ReportTicket["status"]) {
+  const labels: Record<ReportTicket["status"], string> = {
+    pending: "待处理",
+    processing: "处理中",
+    resolved: "已解决",
+    closed: "已关闭",
+  };
+
+  return labels[status];
 }

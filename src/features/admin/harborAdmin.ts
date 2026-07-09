@@ -1,4 +1,4 @@
-import type { FacilityStatus, Harbor, HarborStatus } from "../../types";
+import type { FacilityStatus, Harbor, HarborStatus, ReportTicket, WorkOrderStatus } from "../../types";
 
 export function updateFacilityStatus(harbors: Harbor[], harborId: string, facilityId: string, status: FacilityStatus): Harbor[] {
   return harbors.map((harbor) => {
@@ -31,6 +31,17 @@ export function updateHarborStatus(harbors: Harbor[], harborId: string, status: 
       statusReason: status === "open" ? undefined : "管理员手动更新",
       updatedAt: currentTimeText(),
       dataFreshnessStatus: "fresh",
+    };
+  });
+}
+
+export function updateWorkOrderStatus(tickets: ReportTicket[], workOrderId: string, status: WorkOrderStatus): ReportTicket[] {
+  return tickets.map((ticket) => {
+    if (ticket.workOrderId !== workOrderId) return ticket;
+
+    return {
+      ...ticket,
+      status,
     };
   });
 }

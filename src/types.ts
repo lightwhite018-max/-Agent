@@ -13,6 +13,7 @@ export type FacilityStatus = "normal" | "fault" | "maintenance" | "unknown";
 export type HarborStatus = "open" | "closed" | "temp_closed";
 export type CrowdLevel = "quiet" | "moderate" | "crowded" | "unknown";
 export type Intent = "query_facility" | "query_harbor" | "feedback" | "navigation" | "unclear" | "safety";
+export type WorkOrderStatus = "pending" | "processing" | "resolved" | "closed";
 
 export interface Facility {
   id: string;
@@ -88,7 +89,7 @@ export interface ReportTicket {
   imageUrl?: string;
   imageUploadStatus: "not_provided" | "uploaded" | "failed";
   imageUploadNote?: string;
-  status: "pending";
+  status: WorkOrderStatus;
   createdAt: string;
 }
 
